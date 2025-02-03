@@ -7,10 +7,10 @@ If you have any changes in mind, please contribute back so the community can ben
 
 import base64
 import dataclasses
-from enum import auto, IntEnum
-from io import BytesIO
 import os
-from typing import List, Any, Dict, Union, Tuple
+from enum import IntEnum, auto
+from io import BytesIO
+from typing import Any, Dict, List, Tuple, Union
 
 
 class SeparatorStyle(IntEnum):
@@ -462,9 +462,11 @@ class Conversation:
         return ret
 
     def to_vertex_api_messages(self):
-        from vertexai.preview.generative_models import Image
         import base64
+
         import requests
+        from vertexai.preview.generative_models import Image
+
         from fastchat.serve.vision.image import ImageFormat
 
         if self.system_message == "":
@@ -530,8 +532,9 @@ class Conversation:
         return ret
 
     def to_reka_api_messages(self):
-        from fastchat.serve.vision.image import ImageFormat
         from reka import ChatMessage, TypedMediaContent, TypedText
+
+        from fastchat.serve.vision.image import ImageFormat
 
         ret = []
         for i, (_, msg) in enumerate(self.messages[self.offset :]):
@@ -610,9 +613,11 @@ class Conversation:
 
     def save_new_images(self, has_csam_images=False, use_remote_storage=False):
         import hashlib
+
+        from PIL import Image
+
         from fastchat.constants import LOGDIR
         from fastchat.utils import load_image, upload_image_file_to_gcs
-        from PIL import Image
 
         _, last_user_message = self.messages[-2]
 
@@ -640,8 +645,9 @@ class Conversation:
 
     def extract_text_and_image_hashes_from_messages(self):
         import hashlib
-        from fastchat.utils import load_image
+
         from fastchat.serve.vision.image import ImageFormat
+        from fastchat.utils import load_image
 
         messages = []
 
@@ -2265,6 +2271,15 @@ register_conv_template(
 register_conv_template(
     Conversation(
         name="yandexgpt",
+        system_message="",
+        roles=("user", "assistant"),
+        sep_style=None,
+        sep=None,
+    )
+)
+register_conv_template(
+    Conversation(
+        name="giga",
         system_message="",
         roles=("user", "assistant"),
         sep_style=None,

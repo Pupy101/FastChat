@@ -4,8 +4,8 @@ import math
 import os
 import re
 import sys
-from typing import Dict, List, Optional
 import warnings
+from typing import Dict, List, Optional
 
 if sys.version_info >= (3, 9):
     from functools import cache
@@ -20,8 +20,8 @@ from transformers import (
     AutoModelForCausalLM,
     AutoModelForSeq2SeqLM,
     AutoTokenizer,
-    LlamaTokenizer,
     LlamaForCausalLM,
+    LlamaTokenizer,
     T5Tokenizer,
 )
 
@@ -30,20 +30,19 @@ from fastchat.conversation import Conversation, get_conv_template
 from fastchat.model.compression import load_compress_model
 from fastchat.model.llama_condense_monkey_patch import replace_llama_with_condense
 from fastchat.model.model_chatglm import generate_stream_chatglm
-from fastchat.model.model_codet5p import generate_stream_codet5p
-from fastchat.model.model_falcon import generate_stream_falcon
-from fastchat.model.model_yuan2 import generate_stream_yuan2
-from fastchat.model.model_exllama import generate_stream_exllama
-from fastchat.model.model_xfastertransformer import generate_stream_xft
 from fastchat.model.model_cllm import generate_stream_cllm
-
+from fastchat.model.model_codet5p import generate_stream_codet5p
+from fastchat.model.model_exllama import generate_stream_exllama
+from fastchat.model.model_falcon import generate_stream_falcon
+from fastchat.model.model_xfastertransformer import generate_stream_xft
+from fastchat.model.model_yuan2 import generate_stream_yuan2
 from fastchat.model.monkey_patch_non_inplace import (
     replace_llama_attn_with_non_inplace_operations,
 )
 from fastchat.modules.awq import AWQConfig, load_awq_quantized
 from fastchat.modules.exllama import ExllamaConfig, load_exllama_model
-from fastchat.modules.xfastertransformer import load_xft_model, XftConfig
 from fastchat.modules.gptq import GptqConfig, load_gptq_quantized
+from fastchat.modules.xfastertransformer import XftConfig, load_xft_model
 from fastchat.utils import get_gpu_memory
 
 # Check an environment variable to check if we should be sharing Peft model
@@ -239,9 +238,9 @@ def load_model(
         if num_gpus != 1:
             kwargs["device_map"] = "auto"
             if max_gpu_memory is None:
-                kwargs[
-                    "device_map"
-                ] = "sequential"  # This is important for not the same VRAM sizes
+                kwargs["device_map"] = (
+                    "sequential"  # This is important for not the same VRAM sizes
+                )
                 available_gpu_memory = get_gpu_memory(num_gpus)
                 kwargs["max_memory"] = {
                     i: str(int(available_gpu_memory[i] * 0.85)) + "GiB"
@@ -2420,6 +2419,16 @@ class YandexGPTAdapter(BaseModelAdapter):
         return get_conv_template("yandexgpt")
 
 
+class GigaAdapter(BaseModelAdapter):
+    """The model adapter for YandexGPT"""
+
+    def match(self, model_path: str):
+        return "giga" in model_path.lower()
+
+    def get_default_conv_template(self, model_path: str) -> Conversation:
+        return get_conv_template("giga")
+
+
 class CllmAdapter(BaseModelAdapter):
     """The model adapter for CLLM"""
 
@@ -2595,6 +2604,7 @@ register_model_adapter(CohereAdapter)
 register_model_adapter(DBRXAdapter)
 register_model_adapter(GemmaAdapter)
 register_model_adapter(YandexGPTAdapter)
+register_model_adapter(GigaAdapter)
 register_model_adapter(CllmAdapter)
 register_model_adapter(RekaAdapter)
 register_model_adapter(SmaugChatAdapter)

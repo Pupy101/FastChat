@@ -9,16 +9,22 @@ import json
 import os
 import re
 import time
+from threading import Lock
 from typing import Optional
 
-import openai
 import anthropic
+import openai
+from giga import GigaChat
+from requests.exceptions import RequestException
 
 from fastchat.model.model_adapter import (
-    get_conversation_template,
     ANTHROPIC_MODEL_LIST,
     OPENAI_MODEL_LIST,
+    get_conversation_template,
 )
+
+CLIENT: Optional[GigaChat] = None
+LOCK = Lock()
 
 # API setting constants
 API_MAX_RETRY = 16
@@ -169,6 +175,8 @@ def run_judge_single(question, answer, judge, ref_answer, multi_turn=False):
         judgment = chat_completion_anthropic(
             model, conv, temperature=0, max_tokens=1024
         )
+    elif "giga" in model.lower():
+        judgment = chat_completion_giga(model, conv, temperature=0, max_tokens=1024)
     else:
         raise ValueError(f"Invalid judge model name: {model}")
 
@@ -422,6 +430,33 @@ def chat_completion_openai(model, conv, temperature, max_tokens, api_dict=None):
             output = response["choices"][0]["message"]["content"]
             break
         except openai.error.OpenAIError as e:
+            print(type(e), e)
+            time.sleep(API_RETRY_SLEEP)
+
+    return output
+
+
+def chat_completion_giga(model, conv, temperature, max_tokens, api_dict=None):
+    global CLIENT
+
+    with LOCK:
+        if CLIENT is None:
+            CLIENT = GigaChat()
+
+    assert CLIENT is not None
+    output = API_ERROR_OUTPUT
+    for _ in range(API_MAX_RETRY):
+        try:
+            messages = conv.to_openai_api_messages()
+            response = CLIENT.chat(
+                model=model,
+                messages=messages,
+                temperature=temperature,
+                max_tokens=max_tokens,
+            )
+            output = response["choices"][0]["message"]["content"]
+            break
+        except RequestException as e:
             print(type(e), e)
             time.sleep(API_RETRY_SLEEP)
 

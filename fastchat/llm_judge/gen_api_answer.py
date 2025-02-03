@@ -3,25 +3,27 @@
 Usage:
 python3 gen_api_answer.py --model gpt-3.5-turbo
 """
+
 import argparse
+import concurrent.futures
 import json
 import os
 import time
-import concurrent.futures
 
 import openai
 import shortuuid
 import tqdm
 
 from fastchat.llm_judge.common import (
+    chat_completion_anthropic,
+    chat_completion_giga,
+    chat_completion_openai,
+    chat_completion_palm,
     load_questions,
     temperature_config,
-    chat_completion_openai,
-    chat_completion_anthropic,
-    chat_completion_palm,
 )
 from fastchat.llm_judge.gen_model_answer import reorg_answer_file
-from fastchat.model.model_adapter import get_conversation_template, ANTHROPIC_MODEL_LIST
+from fastchat.model.model_adapter import ANTHROPIC_MODEL_LIST, get_conversation_template
 
 
 def get_answer(
@@ -55,6 +57,8 @@ def get_answer(
                 chat_state, output = chat_completion_palm(
                     chat_state, model, conv, temperature, max_tokens
                 )
+            elif "giga" in model.lower():
+                output = chat_completion_giga(model, conv, temperature, max_tokens)
             else:
                 output = chat_completion_openai(model, conv, temperature, max_tokens)
 
