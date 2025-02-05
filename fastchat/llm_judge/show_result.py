@@ -2,7 +2,9 @@
 Usage:
 python3 show_result.py --mode [single|pairwise-baseline|pairwise-all]
 """
+
 import argparse
+
 import pandas as pd
 
 
@@ -93,7 +95,9 @@ def display_result_pairwise(args):
 
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser()
+    parser = argparse.ArgumentParser(
+        formatter_class=argparse.ArgumentDefaultsHelpFormatter
+    )
     parser.add_argument("--bench-name", type=str, default="mt_bench")
     parser.add_argument("--input-file", type=str)
     parser.add_argument("--judge-model", type=str, default="gpt-4")
