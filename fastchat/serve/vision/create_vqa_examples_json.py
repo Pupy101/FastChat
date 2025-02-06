@@ -35,4 +35,4 @@ if __name__ == "__main__":
             )
 
     with open(f"{args.output_dir}/metadata_sampled.json", "w") as f:
-        json.dump(dataset_json, f, indent=4)
+        json.dump(dataset_json, f, indent=4, ensure_ascii=False)

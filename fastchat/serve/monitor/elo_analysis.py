@@ -546,4 +546,4 @@ if __name__ == "__main__":
         print(f"last update : {cutoff_date}")
 
     with open(f"elo_results_{cutoff_date}.pkl", "wb") as fout:
-        pickle.dump(results, fout)
+        pickle.dump(results, fout, ensure_ascii=False)

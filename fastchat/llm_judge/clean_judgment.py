@@ -90,4 +90,4 @@ if __name__ == "__main__":
 
     with open(outfile, "w") as fout:
         for x in rets:
-            fout.write(json.dumps(x) + "\n")
+            fout.write(json.dumps(x, ensure_ascii=False) + "\n")

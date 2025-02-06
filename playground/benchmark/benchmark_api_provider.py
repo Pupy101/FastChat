@@ -121,7 +121,7 @@ def main(api_endpoint_file, random_questions, output_file):
     models_results = benchmark_models(api_endpoint_info, random_questions_dict, models)
 
     with open(output_file, "w") as f:
-        json.dump(models_results, f)
+        json.dump(models_results, f, ensure_ascii=False)
 
 
 if __name__ == "__main__":

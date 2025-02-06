@@ -140,7 +140,7 @@ def get_answer(
 
     with LOCK:
         with open(answer_file, "a") as fout:
-            fout.write(json.dumps(question.to_dict()) + "\n")
+            fout.write(json.dumps(question.to_dict(), ensure_ascii=False) + "\n")
 
 
 if __name__ == "__main__":

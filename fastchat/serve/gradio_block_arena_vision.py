@@ -108,7 +108,7 @@ def vote_last_response(state, vote_type, model_selector, request: gr.Request):
             "state": state.dict(),
             "ip": get_ip(request),
         }
-        fout.write(json.dumps(data) + "\n")
+        fout.write(json.dumps(data, ensure_ascii=False) + "\n")
     get_remote_logger().log(data)
 
 

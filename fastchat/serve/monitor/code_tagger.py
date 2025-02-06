@@ -171,7 +171,7 @@ if __name__ == "__main__":
     output_data = process_battle_file(args.clean_battle_file, args.n_cpus)
 
     with open(args.output_clean_battle_file, "w") as f:
-        json.dump(output_data, f, indent=4)
+        json.dump(output_data, f, indent=4, ensure_ascii=False)
 
     print(f"Total code conversations: {len(output_data)}")
     print("Done!")

@@ -98,7 +98,7 @@ def process_file(infile: str, outfile: str):
                 try:
                     output = process_record(r)
                     if output is not None:
-                        outfile.write(json.dumps(output) + "\n")
+                        outfile.write(json.dumps(output, ensure_ascii=False) + "\n")
                 except Exception as e:
                     import traceback
 

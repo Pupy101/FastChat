@@ -469,7 +469,7 @@ def chat_loop(
 
             print("saving...", filename)
             with open(filename, "w") as outfile:
-                json.dump(conv.dict(), outfile)
+                json.dump(conv.dict(), outfile, ensure_ascii=False)
             continue
         elif inp.startswith("!!load"):
             args = inp.split(" ", 1)

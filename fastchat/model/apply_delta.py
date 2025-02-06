@@ -114,7 +114,7 @@ def apply_delta_low_cpu_mem(base_model_path, target_model_path, delta_path):
             os.path.join(target_model_path, "pytorch_model.bin.index.json"), "w"
         ) as f:
             json.dump(
-                {"weight_map": weight_map, "metadata": {"total_size": total_size}}, f
+                {"weight_map": weight_map, "metadata": {"total_size": total_size}}, f, ensure_ascii=False
             )
 
     print(f"Saving the target model to {target_model_path}")

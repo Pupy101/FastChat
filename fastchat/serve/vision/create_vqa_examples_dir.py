@@ -52,7 +52,7 @@ def download_images_and_create_json(
             json_data.append(json_entry)
 
         with open(os.path.join(dataset_dir, "data.json"), "w") as json_file:
-            json.dump(json_data, json_file, indent=4)
+            json.dump(json_data, json_file, indent=4, ensure_ascii=False)
         # Delete the cache directory for the dataset
         shutil.rmtree(dataset_cache_dir, ignore_errors=True)
 
@@ -117,4 +117,4 @@ if __name__ == "__main__":
             dataset_json.extend(data)
 
     with open(f"{args.output_dir}/metadata_sampled.json", "w") as f:
-        json.dump(dataset_json, f, indent=4)
+        json.dump(dataset_json, f, indent=4, ensure_ascii=False)
